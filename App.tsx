@@ -20,6 +20,11 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
     // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
@@ -58,7 +63,9 @@ const App: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
   };
 
   const toggleFavorite = async (propertyId: string) => {
@@ -87,6 +94,12 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="flex flex-col min-h-screen">
+        {!supabase && (
+          <div className="bg-amber-100 border-b border-amber-200 px-4 py-2 text-center text-amber-800 text-xs font-bold">
+            <i className="fas fa-exclamation-triangle mr-2"></i>
+            Database connection missing. Using limited offline mode. Login and favorites are disabled.
+          </div>
+        )}
         <Navbar 
           user={user} 
           onLogout={handleLogout} 

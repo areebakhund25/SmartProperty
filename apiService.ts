@@ -1,9 +1,17 @@
 
 import { supabase } from './supabaseClient';
 import { Property, FilterState, PaginatedResponse } from './types';
+import { MOCK_PROPERTIES } from './constants';
+
+const isSupabaseConfigured = !!supabase;
 
 export const apiService = {
   getProperties: async (filters: FilterState): Promise<PaginatedResponse<Property>> => {
+    if (!isSupabaseConfigured) {
+      console.warn("Using mock data as Supabase is not configured.");
+      return simulateMockPagination(filters);
+    }
+
     let query = supabase
       .from('properties')
       .select('*', { count: 'exact' });
@@ -47,6 +55,10 @@ export const apiService = {
   },
 
   getPropertyById: async (id: string): Promise<Property | null> => {
+    if (!isSupabaseConfigured) {
+      return MOCK_PROPERTIES.find(p => p.id === id) || null;
+    }
+
     const { data, error } = await supabase
       .from('properties')
       .select('*')
@@ -58,12 +70,14 @@ export const apiService = {
   },
 
   toggleFavorite: async (userId: string, propertyId: string) => {
+    if (!isSupabaseConfigured) return;
+
     const { data: existing } = await supabase
       .from('favorites')
       .select('*')
       .eq('user_id', userId)
       .eq('property_id', propertyId)
-      .single();
+      .maybeSingle();
 
     if (existing) {
       return supabase
@@ -79,16 +93,22 @@ export const apiService = {
   },
 
   getUserFavorites: async (userId: string) => {
+    if (!isSupabaseConfigured) return [];
+
     const { data, error } = await supabase
       .from('favorites')
       .select('property_id')
       .eq('user_id', userId);
     
     if (error) return [];
-    return data.map(f => f.property_id);
+    return data.map((f: any) => f.property_id);
   },
 
   addProperty: async (propertyData: any) => {
+    if (!isSupabaseConfigured) {
+      throw new Error("Supabase is not configured. Cannot add property.");
+    }
+
     const { data, error } = await supabase
       .from('properties')
       .insert(propertyData)
@@ -99,3 +119,34 @@ export const apiService = {
     return data;
   }
 };
+
+/**
+ * Helper to simulate pagination with mock data when DB is not ready
+ */
+async function simulateMockPagination(filters: FilterState): Promise<PaginatedResponse<Property>> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      let filtered = [...MOCK_PROPERTIES];
+      if (filters.search) {
+        const s = filters.search.toLowerCase();
+        filtered = filtered.filter(p => p.title.toLowerCase().includes(s) || p.location.toLowerCase().includes(s));
+      }
+      if (filters.city) filtered = filtered.filter(p => p.city === filters.city);
+      if (filters.type) filtered = filtered.filter(p => p.type === filters.type);
+      filtered = filtered.filter(p => p.price <= filters.maxPrice);
+
+      const limit = 6;
+      const page = filters.page || 1;
+      const start = (page - 1) * limit;
+      const data = filtered.slice(start, start + limit);
+
+      resolve({
+        data,
+        total: filtered.length,
+        page,
+        limit,
+        totalPages: Math.ceil(filtered.length / limit)
+      });
+    }, 500);
+  });
+}
