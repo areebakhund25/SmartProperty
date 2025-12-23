@@ -3,10 +3,10 @@ import { GoogleGenAI } from "@google/genai";
 import { Property } from "./types";
 
 const apiKey = process.env.API_KEY || "";
-const ai = new GoogleGenAI({ apiKey });
+const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 export const getSmartInsights = async (property: Property): Promise<string> => {
-  if (!apiKey) return "AI Insights are currently unavailable. Please check API configuration.";
+  if (!ai) return "AI Insights are currently unavailable. Please check API configuration.";
 
   try {
     const response = await ai.models.generateContent({
@@ -26,7 +26,12 @@ export const getSmartInsights = async (property: Property): Promise<string> => {
       }
     });
 
-    return response.text || "No insights available for this property.";
+    const text = response.text;
+    if (typeof text === 'string') {
+      return text;
+    }
+    
+    return "No text insights available for this property.";
   } catch (error) {
     console.error("Gemini Error:", error);
     return "Could not generate insights at this time.";

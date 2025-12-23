@@ -20,6 +20,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!supabase) {
+      setError("Authentication service is unavailable.");
+      return;
+    }
+    
     setLoading(true);
     setError(null);
 
@@ -46,7 +51,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       }
       onClose();
     } catch (err: any) {
-      setError(err.message);
+      setError(err?.message || String(err) || "An unexpected authentication error occurred.");
     } finally {
       setLoading(false);
     }

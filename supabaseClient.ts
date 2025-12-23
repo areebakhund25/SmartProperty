@@ -1,8 +1,9 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || '';
+// Configuration provided by the user
+const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://iuzgegdkhbagmwpoprwc.supabase.co';
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_vt36rHFke1h4bFhXwvU91A_KGFPWD2U';
 
 // Create a safe client initialization
 // This prevents the "supabaseUrl is required" crash if environment variables aren't set yet.

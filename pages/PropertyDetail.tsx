@@ -130,7 +130,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ favorites, onToggleFavo
                   {aiInsights ? 'Refresh AI Analysis' : 'Get AI Analysis'}
                 </button>
               </div>
-              {aiInsights ? (
+              {aiInsights && typeof aiInsights === 'string' ? (
                 <div className="bg-blue-50 p-6 rounded-2xl text-blue-800 leading-relaxed animate-fade-in italic">
                   "{aiInsights}"
                 </div>
