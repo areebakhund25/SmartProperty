@@ -1,0 +1,7 @@
+{
+  "name": "SmartProperty",
+  "description": "A premium real estate platform for browsing, filtering, and managing property listings with AI-enhanced insights.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

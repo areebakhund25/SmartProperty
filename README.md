@@ -1,11 +1,35 @@
-<div align="center">
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+# SmartProperty 🏡
 
-  <h1>Built with AI Studio</h2>
+A premium, AI-enhanced real estate platform.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## 🚀 Quick Start (Local)
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-</div>
+2. **Set up Environment Variables:**
+   Create a `.env` file in the root and add:
+   ```env
+   VITE_API_KEY=your_gemini_api_key_here
+   ```
+
+3. **Run development server:**
+   ```bash
+   npm run dev
+   ```
+
+## 🌐 Deployment (Vercel/Netlify)
+
+1. Push your code to a GitHub repository.
+2. Link the repository to **Vercel**.
+3. Add the `API_KEY` to the **Environment Variables** section in the Vercel dashboard.
+4. The build command is `npm run build` and the output directory is `dist`.
+
+## ✨ Features
+- **AI Insights:** Powered by Gemini 2.0 for property analysis.
+- **Advanced Filtering:** Filter by price, city, and property type.
+- **Agent Dashboard:** Manage listings and view inquiries.
+- **Responsive Design:** Mobile-first UI using Tailwind CSS.
